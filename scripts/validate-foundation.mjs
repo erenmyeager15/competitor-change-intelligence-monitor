@@ -99,6 +99,8 @@ const main = await readFile('src/main.ts', 'utf8');
 const runtime = await readFile('src/runtime.ts', 'utf8');
 assert.doesNotMatch(main, /FOUNDATION_ONLY/);
 assert.match(main, /Actor\.pushData\(\{ \.\.\.report \}, eventName\)/);
+assert.match(main, /pricing\.perEventPrices\[PAGE_CHECKED_EVENT\]/);
+assert.match(main, /normalizeSingleReportCharge\(charge\)/);
 assert.doesNotMatch(`${main}\n${runtime}`, /Actor\.charge\s*\(/);
 assert.match(runtime, /PAGE_CHECKED_EVENT/);
 assert.match(main, /Actor\.fail\(message\)/);

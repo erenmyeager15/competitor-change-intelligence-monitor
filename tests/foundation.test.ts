@@ -68,6 +68,8 @@ test('runtime uses the integrated bounded monitor and atomic event persistence',
   assert.doesNotMatch(main, /fetch\s*\(/);
   assert.match(main, /runMonitor/);
   assert.match(main, /Actor\.pushData\(\{ \.\.\.report \}, eventName\)/);
+  assert.match(main, /pricing\.perEventPrices\[PAGE_CHECKED_EVENT\]/);
+  assert.match(main, /normalizeSingleReportCharge\(charge\)/);
   assert.doesNotMatch(main, /Actor\.charge/);
   assert.match(main, /Actor\.fail\(message\)/);
   assert.match(main, /contentType === 'application\/json'/);

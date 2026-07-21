@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { PAGE_CHECKED_EVENT, assessCost, isBillableReport } from '../src/billing.js';
+import { PAGE_CHECKED_EVENT, assessCost, isBillableReport, normalizeSingleReportCharge } from '../src/billing.js';
 import type { TargetReport } from '../src/types.js';
 
 function report(status: TargetReport['status'], persisted = true): TargetReport {
@@ -34,9 +34,19 @@ test('cost assessment never invents measured cloud cost or margin', () => {
   });
 });
 
+test('single-report charge normalization removes SDK dataset bookkeeping counts', () => {
+  const base = { chargeableWithinLimit: { 'page-checked': 10 } };
+  assert.equal(normalizeSingleReportCharge({ ...base, chargedCount: 2, eventChargeLimitReached: false }).chargedCount, 1);
+  assert.equal(normalizeSingleReportCharge({ ...base, chargedCount: 1, eventChargeLimitReached: true }).chargedCount, 1);
+  assert.equal(normalizeSingleReportCharge({ ...base, chargedCount: 0, eventChargeLimitReached: false }).chargedCount, 0);
+  assert.equal(normalizeSingleReportCharge({ ...base, chargedCount: 0, eventChargeLimitReached: true }).chargedCount, 0);
+});
+
 test('entrypoint uses atomic pushData event billing and never separate Actor.charge', async () => {
   const main = await readFile('src/main.ts', 'utf8');
   assert.equal(PAGE_CHECKED_EVENT, 'page-checked');
   assert.match(main, /Actor\.pushData\(\{ \.\.\.report \}, eventName\)/);
+  assert.match(main, /pricing\.perEventPrices\[PAGE_CHECKED_EVENT\] !== RECOMMENDED_PAGE_CHECKED_PRICE_USD/);
+  assert.match(main, /normalizeSingleReportCharge\(charge\)/);
   assert.doesNotMatch(main, /Actor\.charge\s*\(/);
 });

@@ -1,0 +1,17 @@
+{
+  "title": "Competitor Change Intelligence Monitor",
+  "description": "Monitor authorized public competitor, pricing, product, terms, and changelog pages for material changes with bounded evidence, confidence, severity, and action-focused reports.",
+  "isPublic": false,
+  "actorPermissionLevel": "LIMITED_PERMISSIONS",
+  "seoTitle": "Competitor Change Monitor & Price Tracker",
+  "seoDescription": "Monitor authorized competitor pricing, products, terms, and changelogs. Detect material changes with evidence, confidence, severity, and alerts.",
+  "categories": [
+    "BUSINESS",
+    "AUTOMATION",
+    "DEVELOPER_TOOLS"
+  ],
+  "exampleRunInput": {
+    "body": "{\"targets\":[{\"name\":\"Example.com public demo\",\"url\":\"https://example.com/\",\"changeTypes\":[\"general_content\"]}],\"confirmAuthorizedUse\":false,\"baselineAction\":\"compare_only\",\"includeUnchanged\":false,\"minimumMateriality\":\"low\",\"notificationMode\":\"none\",\"minimumAlertSeverity\":\"medium\",\"weeklyDigestDay\":1,\"timezone\":\"UTC\",\"requestTimeoutSeconds\":10,\"maxResponseBytes\":262144,\"maxRetries\":0,\"dryRun\":true}",
+    "contentType": "application/json; charset=utf-8"
+  }
+}

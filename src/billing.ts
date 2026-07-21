@@ -3,6 +3,19 @@ import type { ReportStatus, TargetReport } from './types.js';
 export const PAGE_CHECKED_EVENT = 'page-checked';
 export const RECOMMENDED_PAGE_CHECKED_PRICE_USD = 0.003;
 
+interface AtomicPushChargeResult {
+  chargedCount: number;
+  eventChargeLimitReached: boolean;
+  chargeableWithinLimit: Record<string, number>;
+}
+
+export function normalizeSingleReportCharge<T extends AtomicPushChargeResult>(charge: T): T {
+  return {
+    ...charge,
+    chargedCount: charge.chargedCount < 1 ? 0 : 1,
+  };
+}
+
 const BILLABLE_STATUSES = new Set<ReportStatus>([
   'success_no_change',
   'success_changed',

@@ -1,0 +1,29 @@
+{
+  "pricingInfos": [
+    {
+      "minimalMaxTotalChargeUsd": null,
+      "pricingModel": "PAY_PER_EVENT",
+      "isPriceChangeNotificationSuppressed": false,
+      "pricingPerEvent": {
+        "actorChargeEvents": {
+          "apify-actor-start": {
+            "eventTitle": "Actor Start",
+            "eventDescription": "Charged when the Actor starts. Apify covers the first five seconds of compute for this synthetic event.",
+            "isOneTimeEvent": true,
+            "eventPriceUsd": 0.00005
+          },
+          "page-checked": {
+            "eventTitle": "Page checked",
+            "eventDescription": "Charged once for each successfully checked page report persisted to the dataset. Dry runs, blocked pages, and failed persistence are not charged.",
+            "isOneTimeEvent": false,
+            "eventPriceUsd": 0.003,
+            "isPrimaryEvent": true
+          }
+        }
+      },
+      "startedAt": "2026-07-21T11:53:14.374Z",
+      "createdAt": "2026-07-21T11:53:14.374Z",
+      "apifyMarginPercentage": 0.2
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "targets": [
+    {
+      "name": "Northstar Analytics owner-controlled proof",
+      "url": "https://erenmyeager15.github.io/competitor-change-intelligence-monitor/fixtures/cloud-proof.html",
+      "changeTypes": [
+        "price",
+        "product_feature",
+        "pricing_plan",
+        "terms_policy"
+      ]
+    }
+  ],
+  "confirmAuthorizedUse": true,
+  "baselineAction": "initialize_trusted",
+  "includeUnchanged": false,
+  "minimumMateriality": "low",
+  "notificationMode": "none",
+  "minimumAlertSeverity": "medium",
+  "weeklyDigestDay": 1,
+  "timezone": "UTC",
+  "requestTimeoutSeconds": 15,
+  "maxResponseBytes": 262144,
+  "maxRetries": 1,
+  "dryRun": false
+}
