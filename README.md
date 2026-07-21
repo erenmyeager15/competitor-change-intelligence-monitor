@@ -1,126 +1,180 @@
 # Competitor Change Intelligence Monitor
 
-> Phases 1-5 complete locally. Release, cloud proof, and pricing activation remain
-> blocked behind the Phase 6 owner-approval gate.
+Monitor authorized public competitor pages for meaningful pricing, product,
+availability, plan, policy, and changelog changes. The Actor compares each page
+with a trusted baseline and returns concise evidence, confidence, severity, and a
+recommended human review action.
 
-The planned Actor will monitor bounded, authorized public pages for material pricing,
-availability, product, plan, terms, policy, and changelog changes. It will return
-before/after evidence, confidence, severity, and one concise human review action.
+Use it for competitor pricing intelligence, product launch monitoring, SaaS plan
+tracking, public terms updates, and release-note alerts without building a custom
+monitoring pipeline.
 
-## Current Status
+## What You Get
 
-Completed in Phases 1-5:
+- Structured before-and-after changes instead of raw page diffs
+- Price deltas and percentage changes when values can be normalized safely
+- Categories for price, availability, product features, pricing plans,
+  terms/policies, launches/changelogs, and general content
+- Confidence scores, severity, bounded evidence, and suggested review actions
+- Stable change IDs for deduplication and downstream automation
+- JSON Dataset output plus JSON and Markdown digests
+- Optional immediate or weekly HTTPS webhook delivery
+- Persistent trusted baselines with explicit candidate review and promotion
 
-- Strict Apify input, output, Dataset, and Key-Value Store schemas
-- TypeScript input and report contracts
-- Strict local input parsing and authorization attestation
-- Safe `example.com` dry-run prefill
-- Fictional deterministic changed/unchanged HTML fixtures
-- Docker and GitHub CI foundations
-- HTTPS-only public-target validation
-- DNS rebinding protection with all-address checks and IP-pinned TLS requests
-- Same-origin redirects by default, with explicit authorized-origin support
-- Strict time, redirect, header, compressed-body, and decoded-body bounds
-- Conservative robots.txt enforcement before every target inspection
-- Bounded HTML, JSON, XML, and plain-text extraction
-- Safe CSS selector validation, JSON-LD product facts, and secret/contact redaction
-- Retry and per-origin rate-limit orchestration kept separate from the Actor runtime
-- Canonical redacted snapshot serialization with stable SHA-256 hashes
-- Versioned trusted and candidate manifests with bounded base64 chunks
-- Exact candidate hash and trusted-parent lineage promotion
-- Verified leases, optimistic generation checks, and explicit conflict results
-- Maximum-30 trusted evidence history and post-commit old-generation cleanup
-- Fail-closed corrupt/migration state handling and compare-only immutability
-- Unicode, decimal, currency, unit, pack, model, date, and URL normalization
-- Bounded noise suppression that retains prices, versions, and effective dates
-- Duplicate-safe JSON-LD Product/Offer and pricing-plan fact extraction
-- Deterministic material-change classification across all seven categories
-- Stable change IDs, numeric deltas, severity, confidence, evidence, and human actions
-- Schema-compatible per-target reports with materiality filtering and safety-stop outcomes
-- Bounded general-content excerpts backed by full normalized content hashes
-- Integrated bounded runtime from input parsing through inspection, baseline comparison,
-  report persistence, digest generation, and run summaries
-- Immediate and weekly generic HTTPS webhook delivery after Dataset persistence
-- Webhook SSRF protection, IP-pinned TLS, no redirects, size/time/retry bounds, and
-  secret-safe delivery errors
-- Bounded, redacted, deduplicated JSON/Markdown digests and weekly idempotency state
-- Atomic `page-checked` Dataset persistence and PPE charging through `Actor.pushData`
-- Pre-work paid-event allowance checks and nonbillable safety/failure outcomes
-- Dry-run enforcement with no baseline mutation, webhook delivery, or event charging
-- 89 local foundation, input, security, extraction, robots, inspection, persistence,
-  intelligence, delivery, runtime, and billing tests
+## Quick Start
 
-Not completed yet:
+### 1. Initialize a trusted baseline
 
-- Owner-controlled Apify cloud proof runs
-- Measured cloud-cost and margin approval for the proposed event price
-- GitHub commit/remote, Apify deployment, pricing activation, and Store publication
-
-## Safety Boundary
-
-V1 will support at most 25 explicitly configured public HTTPS pages per run. It will
-not log in, accept cookies, solve CAPTCHAs, bypass access controls, crawl recursively,
-discover competitors automatically, or perform automatic repricing. The authorization
-checkbox records a user's confirmation; it does not create permission.
-
-## Safe Foundation Input
+Run once with a page you are authorized to monitor:
 
 ```json
 {
   "targets": [
     {
-      "name": "Example.com public demo",
-      "url": "https://example.com/",
-      "changeTypes": ["general_content"]
+      "name": "Acme pricing",
+      "url": "https://example.org/pricing",
+      "changeTypes": ["price", "pricing_plan", "product_feature"]
     }
   ],
-  "confirmAuthorizedUse": false,
-  "baselineAction": "compare_only",
+  "confirmAuthorizedUse": true,
+  "baselineAction": "initialize_trusted",
   "notificationMode": "none",
-  "dryRun": true
+  "dryRun": false
 }
 ```
 
-Every non-demo target requires `confirmAuthorizedUse: true`. That confirmation does
-not create permission. Phase 2 validates target and redirect URLs again immediately
-before network access, checks every DNS answer, pins the selected public address to a
-verified TLS request, and enforces robots.txt and response bounds.
+### 2. Compare later runs
 
-`fixtures/cloud-proof.html` is fictional content controlled in this repository. It is
-reserved for owner-approved release verification and must not be presented as a real
-company, offer, or customer result.
+Keep the target name, URL, selected change types, selectors, and product identifiers
+consistent, then change `baselineAction` to `compare_only`. Schedule the Actor in
+Apify Console for recurring checks.
 
-## Phase 5 Boundary
-
-`src/main.ts` now connects the bounded inspection, baseline, intelligence, Dataset,
-digest, delivery, and billing layers through `src/runtime.ts`. Webhooks are optional,
-post-persistence, public-HTTPS-only, size bounded, IP pinned, and redirect free. The
-runtime never calls `Actor.charge()` separately: billable reports use the SDK's atomic
-Dataset/event operation. No cloud run, live webhook, paid test, deployment, or pricing
-activation has occurred. Those are Phase 6 release gates and require owner approval.
-
-## Local Verification
-
-```bash
-npm ci
-npm run verify
-npm audit --omit=dev --audit-level=high
+```json
+{
+  "targets": [
+    {
+      "name": "Acme pricing",
+      "url": "https://example.org/pricing",
+      "changeTypes": ["price", "pricing_plan", "product_feature"]
+    }
+  ],
+  "confirmAuthorizedUse": true,
+  "baselineAction": "compare_only",
+  "minimumMateriality": "low",
+  "notificationMode": "none",
+  "dryRun": false
+}
 ```
 
-## Planned PPE Contract
+The prefilled `example.com` input is a safe dry run. It does not mutate a baseline,
+send a webhook, or charge a `page-checked` event.
 
-The launch proposal is one `page-checked` event at $0.003 for each successfully
-inspected page, subject to measured cloud-cost approval. Invalid, unauthorized,
-blocked, robots-disallowed, failed, dry-run, or non-persisted work will not be charged.
-Billable Dataset persistence and event charging use the Apify SDK's combined atomic
-`Actor.pushData(report, 'page-checked')` operation. The event and proposed price are
-not active until Phase 6 cloud-cost proof and owner approval.
+## Output
 
-## Source Of Truth
+Each target produces one Dataset report with fields such as:
 
-The complete approved design is in:
+```json
+{
+  "targetName": "Acme pricing",
+  "status": "success_changed",
+  "baselineFound": true,
+  "changeDetected": true,
+  "materialChangeCount": 2,
+  "overallSeverity": "high",
+  "overallConfidence": 91,
+  "changes": [
+    {
+      "category": "price",
+      "field": "product.pro.price",
+      "previousValue": 29,
+      "currentValue": 35,
+      "delta": 6,
+      "deltaPercent": 20.6897,
+      "severity": "medium",
+      "confidence": "high",
+      "recommendedAction": "Review pricing, margin, and positioning before changing your offer."
+    }
+  ]
+}
+```
 
-`E:\APIFY PROJECT\APIFY-PORTFOLIO-ROADMAP\COMPETITOR-CHANGE-INTELLIGENCE-MONITOR-SPEC.md`
+The default Key-Value Store also exposes:
 
-Implementation must follow the six gated phases in that document. Do not deploy or
-activate pricing until all acceptance gates pass and the owner explicitly approves.
+- `RUN_SUMMARY`: counts, statuses, delivery result, and page-event assessment
+- `DIGEST_JSON`: bounded machine-readable changes
+- `DIGEST_MARKDOWN`: concise human-readable digest
+
+## Baseline Actions
+
+- `compare_only`: compare with the trusted baseline without changing it
+- `initialize_trusted`: create the first trusted baseline; refuses overwrite
+- `store_candidate`: save a candidate snapshot for review
+- `promote_candidate`: promote only an exact reviewed candidate and parent hash
+
+Use candidate promotion when a detected page revision should become the new trusted
+reference. This prevents an unexpected change from silently replacing the baseline.
+
+## Better Signal With Selectors
+
+For noisy pages, add `includeSelectors` for the sections you care about and
+`excludeSelectors` for banners, timestamps, rotating recommendations, or other
+volatile content. `ignoreTextPatterns` accepts only bounded literal or simple glob
+patterns, not arbitrary regular expressions.
+
+Known SKU, GTIN, MPN, brand, model, variant, and pack quantity values can improve
+product-change confidence. The Actor does not discover competitor products
+automatically or claim uncertain products are equivalent.
+
+## Webhook Alerts
+
+Set `notificationMode` to `immediate` or `weekly_digest`, provide a secret public
+HTTPS `alertWebhookUrl`, and choose `minimumAlertSeverity`. Delivery happens only
+after the Dataset report is persisted. Payloads are deduplicated, redacted, bounded,
+and contain at most ten material changes per delivery.
+
+The webhook URL is secret input and is never logged, returned, or stored in reports
+or digests.
+
+## Pricing
+
+This Actor uses pay per event:
+
+- `page-checked`: **$0.003** for each successfully inspected page report persisted
+  to the Dataset
+- Actor start: Apify's small synthetic start event
+
+Dry runs, invalid input, unauthorized targets, blocked or robots-disallowed pages,
+failed inspections, and failed Dataset persistence do not charge `page-checked`.
+
+## Safety And Limits
+
+- One to 25 explicitly configured public HTTPS pages per run
+- One document per target; no recursive crawling
+- Public-IP DNS validation and rebinding protection
+- Same-origin redirects unless another public HTTPS origin is explicitly authorized
+- Robots.txt enforcement, bounded responses, timeouts, and retries
+- No login, cookie acceptance, CAPTCHA solving, access-control bypass, or repricing
+- Secret, credential, email, and phone-number redaction from retained evidence
+
+`confirmAuthorizedUse` records that you already have permission; it does not create
+permission. Use the Actor only on pages that belong to you, intentionally expose
+content for this use, or that you are otherwise permitted to monitor. Follow source
+terms and applicable laws.
+
+## Common Statuses
+
+- `success_no_change`: the trusted baseline matches
+- `success_changed`: material changes were detected
+- `baseline_missing`: initialize or review a candidate first
+- `robots_disallowed`: source policy blocked inspection
+- `blocked_target`: URL or network safety validation stopped the request
+- `http_error`, `unsupported_content`, or `internal_error`: inspect the report
+
+## Support
+
+When reporting an issue, include the public target type, selected change types, run
+ID, and redacted log excerpt. Never share credentials, private URLs, or webhook
+secrets.
+
+Source and issue tracker:
+[GitHub repository](https://github.com/erenmyeager15/competitor-change-intelligence-monitor)

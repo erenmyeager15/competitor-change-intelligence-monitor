@@ -8,7 +8,7 @@
   "input": "./INPUT_SCHEMA.json",
   "output": "./output_schema.json",
   "readme": "../README.md",
-  "categories": ["AUTOMATION", "DEVELOPER_TOOLS", "ECOMMERCE"],
+  "categories": ["BUSINESS", "AUTOMATION", "ECOMMERCE"],
   "storages": {
     "dataset": "./dataset_schema.json",
     "keyValueStore": "./key_value_store_schema.json"
@@ -16,7 +16,8 @@
   "defaultRunOptions": {
     "build": "latest",
     "memoryMbytes": 512,
-    "timeoutSecs": 1800
+    "timeoutSecs": 300,
+    "maxItems": 25
   },
   "minMemoryMbytes": 256,
   "maxMemoryMbytes": 2048
