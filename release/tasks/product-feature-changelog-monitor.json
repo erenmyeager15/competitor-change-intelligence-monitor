@@ -1,0 +1,35 @@
+{
+  "actId": "ZGIJ6NywSRJSi8DqF",
+  "name": "product-feature-changelog-monitor",
+  "title": "Product Feature & Changelog Monitor",
+  "options": {
+    "build": "latest",
+    "memoryMbytes": 512,
+    "timeoutSecs": 300
+  },
+  "input": {
+    "targets": [
+      {
+        "name": "Northstar Analytics owner-controlled proof",
+        "url": "https://erenmyeager15.github.io/competitor-change-intelligence-monitor/fixtures/cloud-proof.html",
+        "changeTypes": [
+          "product_feature",
+          "launch_changelog",
+          "pricing_plan"
+        ]
+      }
+    ],
+    "confirmAuthorizedUse": true,
+    "baselineAction": "compare_only",
+    "includeUnchanged": true,
+    "minimumMateriality": "informational",
+    "notificationMode": "none",
+    "minimumAlertSeverity": "medium",
+    "weeklyDigestDay": 1,
+    "timezone": "UTC",
+    "requestTimeoutSeconds": 10,
+    "maxResponseBytes": 262144,
+    "maxRetries": 0,
+    "dryRun": true
+  }
+}

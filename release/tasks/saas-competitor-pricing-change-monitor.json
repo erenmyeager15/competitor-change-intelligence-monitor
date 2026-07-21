@@ -1,0 +1,36 @@
+{
+  "actId": "ZGIJ6NywSRJSi8DqF",
+  "name": "saas-competitor-pricing-change-monitor",
+  "title": "SaaS Competitor Pricing Change Monitor",
+  "options": {
+    "build": "latest",
+    "memoryMbytes": 512,
+    "timeoutSecs": 300
+  },
+  "input": {
+    "targets": [
+      {
+        "name": "Northstar Analytics owner-controlled proof",
+        "url": "https://erenmyeager15.github.io/competitor-change-intelligence-monitor/fixtures/cloud-proof.html",
+        "changeTypes": [
+          "price",
+          "pricing_plan",
+          "product_feature",
+          "terms_policy"
+        ]
+      }
+    ],
+    "confirmAuthorizedUse": true,
+    "baselineAction": "compare_only",
+    "includeUnchanged": false,
+    "minimumMateriality": "low",
+    "notificationMode": "none",
+    "minimumAlertSeverity": "medium",
+    "weeklyDigestDay": 1,
+    "timezone": "UTC",
+    "requestTimeoutSeconds": 15,
+    "maxResponseBytes": 262144,
+    "maxRetries": 1,
+    "dryRun": true
+  }
+}

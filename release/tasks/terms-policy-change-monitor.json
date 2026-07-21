@@ -1,0 +1,34 @@
+{
+  "actId": "ZGIJ6NywSRJSi8DqF",
+  "name": "terms-policy-change-monitor",
+  "title": "Terms & Policy Change Monitor",
+  "options": {
+    "build": "latest",
+    "memoryMbytes": 512,
+    "timeoutSecs": 300
+  },
+  "input": {
+    "targets": [
+      {
+        "name": "Northstar Analytics owner-controlled proof",
+        "url": "https://erenmyeager15.github.io/competitor-change-intelligence-monitor/fixtures/cloud-proof.html",
+        "changeTypes": [
+          "terms_policy",
+          "general_content"
+        ]
+      }
+    ],
+    "confirmAuthorizedUse": true,
+    "baselineAction": "compare_only",
+    "includeUnchanged": true,
+    "minimumMateriality": "informational",
+    "notificationMode": "none",
+    "minimumAlertSeverity": "medium",
+    "weeklyDigestDay": 1,
+    "timezone": "UTC",
+    "requestTimeoutSeconds": 10,
+    "maxResponseBytes": 262144,
+    "maxRetries": 0,
+    "dryRun": true
+  }
+}

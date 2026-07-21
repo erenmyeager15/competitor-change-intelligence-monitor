@@ -1,0 +1,83 @@
+{
+  "proofRunId": "terQBYfh6smomsfPL",
+  "proofDatasetId": "qke22zy74SZoDmUNW",
+  "actorBuild": "0.1.4",
+  "targetName": "Northstar Analytics owner-controlled proof",
+  "targetUrl": "https://erenmyeager15.github.io/competitor-change-intelligence-monitor/fixtures/cloud-proof.html",
+  "status": "success_changed",
+  "reachable": true,
+  "robotsAllowed": true,
+  "baselineFound": true,
+  "baselineAction": "compare_only",
+  "baselineUpdated": false,
+  "changeDetected": true,
+  "materialChangeCount": 4,
+  "overallSeverity": "high",
+  "overallConfidence": 84,
+  "summary": "Northstar Analytics owner-controlled proof has 4 material change(s); highest severity is high.",
+  "changes": [
+    {
+      "category": "price",
+      "field": "product.northteam.price",
+      "previousValue": 29,
+      "currentValue": 35,
+      "delta": 6,
+      "deltaPercent": 20.6897,
+      "severity": "medium",
+      "confidenceScore": 97,
+      "evidence": {
+        "previousExcerpt": "Northstar Analytics Team: USD 29",
+        "currentExcerpt": "Northstar Analytics Team: USD 35",
+        "sources": ["json_ld"]
+      }
+    },
+    {
+      "category": "pricing_plan",
+      "field": "pricingPlan.team.limit.dashboards",
+      "previousValue": 10,
+      "currentValue": 25,
+      "delta": 15,
+      "deltaPercent": 150,
+      "severity": "medium",
+      "confidenceScore": 80,
+      "evidence": {
+        "previousExcerpt": "Team plan $29 per month Available 10 dashboards Weekly exports",
+        "currentExcerpt": "Team plan $35 per month Available 25 dashboards Weekly exports Priority alerts",
+        "sources": ["pricing_selector"]
+      }
+    },
+    {
+      "category": "product_feature",
+      "field": "pricingPlan.team.features",
+      "previousValue": ["10 dashboards", "Weekly exports"],
+      "currentValue": ["25 dashboards", "Priority alerts", "Weekly exports"],
+      "severity": "medium",
+      "confidenceScore": 80,
+      "evidence": {
+        "previousExcerpt": "Team plan $29 per month Available 10 dashboards Weekly exports",
+        "currentExcerpt": "Team plan $35 per month Available 25 dashboards Weekly exports Priority alerts",
+        "sources": ["pricing_selector"]
+      }
+    },
+    {
+      "category": "terms_policy",
+      "field": "policy.section-1.text",
+      "previousValue": "Cancel at any time.",
+      "currentValue": "Annual commitment required.",
+      "severity": "high",
+      "confidenceScore": 80,
+      "evidence": {
+        "previousExcerpt": "Cancel at any time.",
+        "currentExcerpt": "Annual commitment required.",
+        "sources": ["policy_selector"]
+      }
+    }
+  ],
+  "inspection": {
+    "httpStatus": 200,
+    "contentType": "text/html",
+    "responseBytes": 527,
+    "latencyMs": 908
+  },
+  "checkedAt": "2026-07-21T12:12:50.012Z"
+}
