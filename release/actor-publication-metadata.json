@@ -1,0 +1,13 @@
+{
+  "isPublic": true,
+  "title": "Competitor Change Intelligence Monitor",
+  "description": "Monitor authorized public competitor, pricing, product, terms, and changelog pages for material changes with bounded evidence, confidence, severity, and action-focused reports.",
+  "categories": [
+    "BUSINESS",
+    "AUTOMATION",
+    "ECOMMERCE"
+  ],
+  "seoTitle": "Competitor Change Monitor & Price Tracker",
+  "seoDescription": "Monitor authorized competitor pricing, products, terms, and changelogs. Detect material changes with evidence, confidence, severity, and alerts.",
+  "actorPermissionLevel": "LIMITED_PERMISSIONS"
+}

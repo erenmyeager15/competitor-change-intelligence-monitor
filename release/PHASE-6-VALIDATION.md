@@ -1,6 +1,6 @@
 # Phase 6 private-cloud validation
 
-Validated on 2026-07-21 against private Apify build `0.1.3` and the
+Validated on 2026-07-21 against private Apify builds `0.1.3` and `0.1.4`, and the
 owner-controlled GitHub Pages fixture.
 
 ## Automated verification
@@ -11,7 +11,11 @@ owner-controlled GitHub Pages fixture.
 - Entrypoint check: passed
 - Foundation validation: passed
 - Apify input, Dataset, output, and Key-Value Store schemas: passed
-- GitHub CI run `29828849471`: passed
+- Final release commit: `721e1b7016e61e09a2701d21bb7cf60939f12a8e`
+- Final GitHub CI run `29829789894`: passed
+- Final Apify build `0.1.4` (`caZ8ctQQXlundxru6`): passed
+- Final no-charge smoke run `hHdi4O8y7xbvi6xFW`: passed with one report,
+  zero billable page reports, and delivery disabled
 
 ## Private-cloud proofs
 
@@ -85,6 +89,8 @@ fraud controls.
 ## Release decision
 
 Functional, safety, persistence, delivery, billing-count, and measured-margin gates
-passed. The owner-controlled fixture was restored to trusted v1 after proof. Store
-publication still requires the final README/icon deployment and explicit public
-metadata update.
+passed. The owner-controlled fixture was restored to trusted v1 after proof. The
+Store README and local icon were deployed in build `0.1.4`. Public metadata is
+recorded in `actor-publication-metadata.json`; the icon must be uploaded through the
+authenticated Apify Console because the Actor API rejects externally hosted picture
+URLs.
