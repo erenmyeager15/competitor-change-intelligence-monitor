@@ -1,0 +1,35 @@
+{
+  "name": "competitor-change-intelligence-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Authorized public-page change intelligence Actor foundation for material competitor, pricing, product, terms, and changelog changes.",
+  "license": "Apache-2.0",
+  "main": "dist/src/main.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/src/main.js",
+    "check": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
+    "check:entrypoint": "node -e \"require('node:fs').accessSync('dist/src/main.js')\"",
+    "validate:foundation": "node scripts/validate-foundation.mjs",
+    "validate:schemas": "npx --yes apify-cli@1.7.1 validate-schema",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "verify": "npm run check && npm test && npm run check:entrypoint && npm run validate:foundation && npm run validate:schemas"
+  },
+  "dependencies": {
+    "apify": "3.7.2",
+    "cheerio": "1.0.0",
+    "fast-xml-parser": "5.10.1",
+    "robots-parser": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "typescript": "5.9.2"
+  },
+  "overrides": {
+    "adm-zip": "0.6.0"
+  }
+}

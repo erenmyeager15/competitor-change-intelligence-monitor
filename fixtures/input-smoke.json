@@ -1,0 +1,21 @@
+{
+  "targets": [
+    {
+      "name": "Example.com public demo",
+      "url": "https://example.com/",
+      "changeTypes": ["general_content"]
+    }
+  ],
+  "confirmAuthorizedUse": false,
+  "baselineAction": "compare_only",
+  "includeUnchanged": false,
+  "minimumMateriality": "low",
+  "notificationMode": "none",
+  "minimumAlertSeverity": "medium",
+  "weeklyDigestDay": 1,
+  "timezone": "UTC",
+  "requestTimeoutSeconds": 10,
+  "maxResponseBytes": 262144,
+  "maxRetries": 0,
+  "dryRun": true
+}

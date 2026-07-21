@@ -1,0 +1,194 @@
+{
+  "actorKeyValueStoreSchemaVersion": 1,
+  "title": "Change intelligence reports and baseline state",
+  "description": "Run summaries, concise digests, and versioned trusted/candidate baseline records. Raw HTML, webhook URLs, credentials, and personal contact data are not stored.",
+  "collections": {
+    "runSummary": {
+      "title": "Run summary",
+      "description": "Machine-readable totals and delivery outcome for the current run.",
+      "key": "RUN_SUMMARY.json",
+      "contentTypes": ["application/json"]
+    },
+    "digestMarkdown": {
+      "title": "Markdown digest",
+      "description": "Bounded action-focused human-readable digest.",
+      "key": "DIGEST.md",
+      "contentTypes": ["text/markdown"]
+    },
+    "digestJson": {
+      "title": "JSON digest",
+      "description": "Bounded machine-readable material-change digest.",
+      "key": "DIGEST.json",
+      "contentTypes": ["application/json"]
+    },
+    "trustedBaselineManifests": {
+      "title": "Trusted baseline manifests",
+      "description": "Versioned manifests for normalized snapshots, mutated only by explicit trusted initialization or exact candidate promotion.",
+      "keyPrefix": "trusted-baseline-v1-manifest-",
+      "contentTypes": ["application/json"],
+      "jsonSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "type": "string", "const": "trusted" },
+          "storageSchemaVersion": { "type": "integer", "const": 1 },
+          "normalizerVersion": { "type": "string" },
+          "targetIdentityHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "snapshotHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "generation": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$" },
+          "chunks": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "key": { "type": "string", "maxLength": 512 },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "byteLength": { "type": "integer", "minimum": 0, "maximum": 524288 }
+              },
+              "required": ["key", "sha256", "byteLength"]
+            }
+          },
+          "byteLength": { "type": "integer", "minimum": 2, "maximum": 2097152 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "evidenceHistory": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "checkedAt": { "type": "string", "format": "date-time" },
+                "snapshotHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "status": { "type": "string", "maxLength": 64 },
+                "materialChangeCount": { "type": "integer", "minimum": 0, "maximum": 100000 }
+              },
+              "required": ["checkedAt", "snapshotHash", "status", "materialChangeCount"]
+            }
+          }
+        },
+        "required": ["kind", "storageSchemaVersion", "normalizerVersion", "targetIdentityHash", "snapshotHash", "generation", "chunks", "byteLength", "createdAt", "updatedAt", "evidenceHistory"]
+      }
+    },
+    "candidateBaselineManifests": {
+      "title": "Candidate baseline manifests",
+      "description": "Separate reviewed-change candidates with exact trusted-parent lineage.",
+      "keyPrefix": "candidate-baseline-v1-manifest-",
+      "contentTypes": ["application/json"],
+      "jsonSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "type": "string", "const": "candidate" },
+          "storageSchemaVersion": { "type": "integer", "const": 1 },
+          "normalizerVersion": { "type": "string" },
+          "candidateId": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$" },
+          "targetIdentityHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "snapshotHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "trustedParentSnapshotHash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+          "generation": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$" },
+          "chunks": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "key": { "type": "string", "maxLength": 512 },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "byteLength": { "type": "integer", "minimum": 0, "maximum": 524288 }
+              },
+              "required": ["key", "sha256", "byteLength"]
+            }
+          },
+          "byteLength": { "type": "integer", "minimum": 2, "maximum": 2097152 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["kind", "storageSchemaVersion", "normalizerVersion", "candidateId", "targetIdentityHash", "snapshotHash", "trustedParentSnapshotHash", "generation", "chunks", "byteLength", "createdAt", "updatedAt"]
+      }
+    },
+    "trustedBaselineChunks": {
+      "title": "Trusted baseline chunks",
+      "description": "Bounded base64 chunks referenced by a verified trusted manifest.",
+      "keyPrefix": "trusted-baseline-v1-chunk-",
+      "contentTypes": ["application/json"]
+    },
+    "candidateBaselineChunks": {
+      "title": "Candidate baseline chunks",
+      "description": "Bounded base64 chunks isolated from trusted state until exact promotion.",
+      "keyPrefix": "candidate-baseline-v1-chunk-",
+      "contentTypes": ["application/json"]
+    },
+    "baselineLeases": {
+      "title": "Baseline operation leases",
+      "description": "Short-lived verified leases used with optimistic manifest generation checks.",
+      "keyPrefix": "baseline-lease-v1-",
+      "contentTypes": ["application/json"]
+    },
+    "weeklyDigestState": {
+      "title": "Weekly digest state",
+      "description": "Redacted deduplicated summaries and delivery idempotency data for bounded weekly windows.",
+      "keyPrefix": "weekly-digest-v1-",
+      "contentTypes": ["application/json"],
+      "jsonSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schemaVersion": { "type": "integer", "const": 1 },
+          "windowId": { "type": "string", "minLength": 4, "maxLength": 80 },
+          "destinationHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "timezone": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "deliveryDay": { "type": "integer", "minimum": 1, "maximum": 7 },
+          "pendingChanges": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "changeId": { "type": "string", "minLength": 1, "maxLength": 128 },
+                "targetName": { "type": "string", "maxLength": 100 },
+                "targetUrl": { "type": "string", "maxLength": 2048 },
+                "category": { "type": "string", "enum": ["price", "availability", "product_feature", "pricing_plan", "terms_policy", "launch_changelog", "general_content"] },
+                "field": { "type": "string", "maxLength": 256 },
+                "severity": { "type": "string", "enum": ["informational", "low", "medium", "high", "critical"] },
+                "confidenceScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+                "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+                "explanation": { "type": "string", "maxLength": 300 },
+                "recommendedAction": { "type": "string", "maxLength": 300 },
+                "previousExcerpt": { "type": ["string", "null"], "maxLength": 240 },
+                "currentExcerpt": { "type": ["string", "null"], "maxLength": 240 }
+              },
+              "required": ["changeId", "targetName", "targetUrl", "category", "field", "severity", "confidenceScore", "confidence", "explanation", "recommendedAction", "previousExcerpt", "currentExcerpt"]
+            }
+          },
+          "delivery": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "deliveryId": { "type": "string", "minLength": 1, "maxLength": 128 },
+                  "owner": { "type": "string", "minLength": 1, "maxLength": 64 },
+                  "status": { "type": "string", "enum": ["sending", "delivered"] },
+                  "acquiredAt": { "type": "string", "format": "date-time" },
+                  "expiresAt": { "type": "string", "format": "date-time" },
+                  "deliveredAt": { "type": ["string", "null"], "format": "date-time" }
+                },
+                "required": ["deliveryId", "owner", "status", "acquiredAt", "expiresAt", "deliveredAt"]
+              }
+            ]
+          },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["schemaVersion", "windowId", "destinationHash", "timezone", "deliveryDay", "pendingChanges", "delivery", "updatedAt"]
+      }
+    }
+  }
+}

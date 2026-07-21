@@ -1,0 +1,12 @@
+{
+  "fixture": "northstar-analytics-pricing",
+  "expectedCategories": ["price", "product_feature", "pricing_plan", "terms_policy"],
+  "expectedFacts": {
+    "previousPrice": 29,
+    "currentPrice": 35,
+    "currency": "USD",
+    "previousDashboardLimit": 10,
+    "currentDashboardLimit": 25
+  },
+  "note": "This fixture is fictional and exists only for deterministic local extraction, baseline, and intelligence tests. It is never fetched from the public web."
+}

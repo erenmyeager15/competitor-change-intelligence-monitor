@@ -1,0 +1,193 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "additionalProperties": false,
+    "definitions": {
+      "severity": {
+        "type": "string",
+        "enum": ["informational", "low", "medium", "high", "critical"]
+      },
+      "confidenceBand": {
+        "type": "string",
+        "enum": ["low", "medium", "high"]
+      },
+      "change": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "changeId": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["price", "availability", "product_feature", "pricing_plan", "terms_policy", "launch_changelog", "general_content"]
+          },
+          "field": { "type": "string" },
+          "previousValue": { "type": ["object", "array", "string", "number", "boolean", "null"] },
+          "currentValue": { "type": ["object", "array", "string", "number", "boolean", "null"] },
+          "delta": { "type": ["number", "null"] },
+          "deltaPercent": { "type": ["number", "null"] },
+          "severity": { "$ref": "#/definitions/severity" },
+          "confidenceScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "confidence": { "$ref": "#/definitions/confidenceBand" },
+          "explanation": { "type": "string" },
+          "recommendedAction": { "type": "string" },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "previousExcerpt": { "type": ["string", "null"] },
+              "currentExcerpt": { "type": ["string", "null"] },
+              "sources": {
+                "type": "array",
+                "maxItems": 10,
+                "items": { "type": "string" }
+              }
+            },
+            "required": ["previousExcerpt", "currentExcerpt", "sources"]
+          }
+        },
+        "required": ["changeId", "category", "field", "previousValue", "currentValue", "delta", "deltaPercent", "severity", "confidenceScore", "confidence", "explanation", "recommendedAction", "evidence"]
+      },
+      "inspection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "httpStatus": { "type": ["integer", "null"], "minimum": 100, "maximum": 599 },
+          "contentType": { "type": ["string", "null"] },
+          "responseBytes": { "type": "integer", "minimum": 0 },
+          "latencyMs": { "type": "integer", "minimum": 0 },
+          "etag": { "type": ["string", "null"] },
+          "lastModified": { "type": ["string", "null"] },
+          "redirectOrigins": {
+            "type": "array",
+            "maxItems": 6,
+            "items": { "type": "string", "format": "uri" }
+          }
+        },
+        "required": ["httpStatus", "contentType", "responseBytes", "latencyMs", "redirectOrigins"]
+      },
+      "error": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["code", "message"]
+      }
+    },
+    "properties": {
+      "targetName": { "type": "string", "title": "Target" },
+      "targetUrl": { "type": "string", "title": "Target URL", "format": "uri" },
+      "finalUrl": { "type": "string", "title": "Final URL", "format": "uri" },
+      "status": {
+        "type": "string",
+        "title": "Status",
+        "enum": ["success_no_change", "success_changed", "baseline_missing", "baseline_initialized", "candidate_stored", "candidate_promoted", "promotion_mismatch", "authorization_required", "robots_disallowed", "blocked_target", "unsupported_content", "unreachable", "rate_limited", "timeout", "response_too_large", "invalid_response", "concurrency_conflict", "internal_error"]
+      },
+      "reachable": { "type": "boolean", "title": "Reachable" },
+      "robotsAllowed": { "type": ["boolean", "null"], "title": "Robots allowed" },
+      "baselineFound": { "type": "boolean", "title": "Baseline found" },
+      "baselineAction": {
+        "type": "string",
+        "title": "Baseline action",
+        "enum": ["compare_only", "initialize_trusted", "store_candidate", "promote_candidate"]
+      },
+      "baselineUpdated": { "type": "boolean", "title": "Baseline updated" },
+      "candidateStored": { "type": "boolean", "title": "Candidate stored" },
+      "candidateId": { "type": ["string", "null"], "title": "Candidate ID" },
+      "previousSnapshotHash": { "type": ["string", "null"], "title": "Previous hash" },
+      "currentSnapshotHash": { "type": ["string", "null"], "title": "Current hash" },
+      "changeDetected": { "type": "boolean", "title": "Change detected" },
+      "materialChangeCount": { "type": "integer", "title": "Material changes", "minimum": 0 },
+      "overallSeverity": { "$ref": "#/definitions/severity", "title": "Severity" },
+      "overallConfidence": { "type": "integer", "title": "Confidence", "minimum": 0, "maximum": 100 },
+      "summary": { "type": "string", "title": "Summary" },
+      "recommendedAction": { "type": "string", "title": "Recommended action" },
+      "changes": {
+        "type": "array",
+        "title": "Classified changes",
+        "maxItems": 100,
+        "items": { "$ref": "#/definitions/change" }
+      },
+      "inspection": { "$ref": "#/definitions/inspection", "title": "Inspection" },
+      "checkedAt": { "type": "string", "title": "Checked at", "format": "date-time" },
+      "persistence": {
+        "type": "object",
+        "title": "Persistence",
+        "additionalProperties": false,
+        "properties": {
+          "succeeded": { "type": "boolean" },
+          "error": { "type": "string" }
+        },
+        "required": ["succeeded"]
+      },
+      "error": { "$ref": "#/definitions/error", "title": "Error" }
+    },
+    "required": ["targetName", "targetUrl", "finalUrl", "status", "reachable", "robotsAllowed", "baselineFound", "baselineAction", "baselineUpdated", "candidateStored", "candidateId", "previousSnapshotHash", "currentSnapshotHash", "changeDetected", "materialChangeCount", "overallSeverity", "overallConfidence", "summary", "recommendedAction", "changes", "inspection", "checkedAt", "persistence"]
+  },
+  "views": {
+    "overview": {
+      "title": "Change intelligence overview",
+      "description": "Prioritized target status, material changes, confidence, and recommended action.",
+      "transformation": {
+        "fields": ["targetName", "targetUrl", "status", "overallSeverity", "overallConfidence", "materialChangeCount", "summary", "recommendedAction", "baselineFound", "checkedAt"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "targetName": { "label": "Target", "format": "text" },
+          "targetUrl": { "label": "URL", "format": "link" },
+          "status": { "label": "Status", "format": "text" },
+          "overallSeverity": { "label": "Severity", "format": "text" },
+          "overallConfidence": { "label": "Confidence", "format": "number" },
+          "materialChangeCount": { "label": "Changes", "format": "number" },
+          "summary": { "label": "Summary", "format": "text" },
+          "recommendedAction": { "label": "Action", "format": "text" },
+          "baselineFound": { "label": "Baseline", "format": "boolean" },
+          "checkedAt": { "label": "Checked", "format": "date" }
+        }
+      }
+    },
+    "changes": {
+      "title": "Material change detail",
+      "description": "Evidence-backed classified changes for human review and downstream workflows.",
+      "transformation": {
+        "fields": ["targetName", "targetUrl", "status", "overallSeverity", "overallConfidence", "changes", "checkedAt"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "targetName": { "label": "Target", "format": "text" },
+          "targetUrl": { "label": "URL", "format": "link" },
+          "status": { "label": "Status", "format": "text" },
+          "overallSeverity": { "label": "Severity", "format": "text" },
+          "overallConfidence": { "label": "Confidence", "format": "number" },
+          "changes": { "label": "Changes", "format": "array" },
+          "checkedAt": { "label": "Checked", "format": "date" }
+        }
+      }
+    },
+    "failures": {
+      "title": "Safety stops and failures",
+      "description": "Structured blocked, authorization, robots, response, and runtime outcomes.",
+      "transformation": {
+        "filter": "status != 'success_no_change' && status != 'success_changed' && status != 'baseline_missing' && status != 'baseline_initialized' && status != 'candidate_stored' && status != 'candidate_promoted'",
+        "fields": ["targetName", "targetUrl", "status", "reachable", "robotsAllowed", "inspection", "error", "checkedAt"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "targetName": { "label": "Target", "format": "text" },
+          "targetUrl": { "label": "URL", "format": "link" },
+          "status": { "label": "Status", "format": "text" },
+          "reachable": { "label": "Reachable", "format": "boolean" },
+          "robotsAllowed": { "label": "Robots allowed", "format": "boolean" },
+          "inspection": { "label": "Inspection", "format": "object" },
+          "error": { "label": "Error", "format": "object" },
+          "checkedAt": { "label": "Checked", "format": "date" }
+        }
+      }
+    }
+  }
+}

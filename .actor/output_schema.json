@@ -1,0 +1,32 @@
+{
+  "$schema": "https://apify-projects.github.io/actor-json-schemas/output.json?v=0.3",
+  "actorOutputSchemaVersion": 1,
+  "title": "Competitor change intelligence output",
+  "description": "Per-target monitoring reports, concise run summaries, and human-readable or machine-readable digests. Persistent baseline state is intentionally not exposed as a run-output link.",
+  "properties": {
+    "reports": {
+      "type": "string",
+      "title": "Target reports",
+      "description": "One structured monitoring or safety-stop report per processed target.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    },
+    "runSummary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Machine-readable run counts, severity totals, baseline outcomes, and delivery status.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/RUN_SUMMARY.json"
+    },
+    "digestMarkdown": {
+      "type": "string",
+      "title": "Human-readable digest",
+      "description": "Concise Markdown digest of material changes and recommended review actions.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIGEST.md"
+    },
+    "digestJson": {
+      "type": "string",
+      "title": "Machine-readable digest",
+      "description": "Structured digest for downstream automation and AI-agent workflows.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIGEST.json"
+    }
+  }
+}

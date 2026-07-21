@@ -1,0 +1,285 @@
+{
+  "title": "Competitor Change Intelligence Monitor input",
+  "description": "Monitor bounded, authorized public pages for material business changes. The safe default never mutates a trusted baseline.",
+  "type": "object",
+  "schemaVersion": 1,
+  "additionalProperties": false,
+  "properties": {
+    "targets": {
+      "title": "Authorized target pages",
+      "type": "array",
+      "description": "One to 25 public HTTPS pages that intentionally expose public content, belong to you, or that you have permission to monitor. V1 checks one document per target and does not crawl recursively.",
+      "editor": "json",
+      "minItems": 1,
+      "maxItems": 25,
+      "prefill": [
+        {
+          "name": "Example.com public demo",
+          "url": "https://example.com/",
+          "changeTypes": ["general_content"]
+        }
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Target name",
+            "type": "string",
+            "description": "Unique human-readable target name used to organize reports and baseline identity.",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": ".*\\S.*"
+          },
+          "url": {
+            "title": "Target URL",
+            "type": "string",
+            "description": "Absolute public HTTPS URL without URL credentials or a fragment.",
+            "minLength": 9,
+            "maxLength": 2048,
+            "pattern": "^https:\\/\\/[^\\s]+$"
+          },
+          "changeTypes": {
+            "title": "Change types",
+            "type": "array",
+            "description": "Business changes to extract and classify for this target.",
+            "editor": "stringList",
+            "minItems": 1,
+            "maxItems": 7,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^(?:price|availability|product_feature|pricing_plan|terms_policy|launch_changelog|general_content)$"
+            }
+          },
+          "includeSelectors": {
+            "title": "Include CSS selectors",
+            "type": "array",
+            "description": "Optional bounded CSS selectors whose matched content is eligible for monitoring. Selector safety is validated at runtime.",
+            "editor": "stringList",
+            "maxItems": 10,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": ".*\\S.*"
+            }
+          },
+          "excludeSelectors": {
+            "title": "Exclude CSS selectors",
+            "type": "array",
+            "description": "Optional bounded CSS selectors for volatile or irrelevant content that should be removed before comparison.",
+            "editor": "stringList",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": ".*\\S.*"
+            }
+          },
+          "ignoreTextPatterns": {
+            "title": "Ignored text patterns",
+            "type": "array",
+            "description": "Optional literal or simple glob patterns for known volatile text. User-provided regular expressions are not accepted in v1.",
+            "editor": "stringList",
+            "maxItems": 10,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": ".*\\S.*"
+            }
+          },
+          "currency": {
+            "title": "Currency hint",
+            "type": "string",
+            "description": "Optional three-letter ISO 4217 currency hint. The Actor never performs currency conversion.",
+            "minLength": 3,
+            "maxLength": 3,
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "productIdentifiers": {
+            "title": "Known product identifiers",
+            "type": "object",
+            "description": "Optional identifiers that improve product-change confidence without enabling automatic product discovery.",
+            "editor": "json",
+            "additionalProperties": false,
+            "properties": {
+              "sku": { "title": "SKU", "type": "string", "description": "Known seller or manufacturer stock-keeping unit.", "minLength": 1, "maxLength": 128 },
+              "gtin": { "title": "GTIN", "type": "string", "description": "Known 8-14 digit Global Trade Item Number.", "minLength": 8, "maxLength": 14, "pattern": "^[0-9]+$" },
+              "mpn": { "title": "MPN", "type": "string", "description": "Known manufacturer part number.", "minLength": 1, "maxLength": 128 },
+              "brand": { "title": "Brand", "type": "string", "description": "Known product brand.", "minLength": 1, "maxLength": 128 },
+              "model": { "title": "Model", "type": "string", "description": "Known product model identifier.", "minLength": 1, "maxLength": 128 },
+              "variant": { "title": "Variant", "type": "string", "description": "Known size, color, or other product variant.", "minLength": 1, "maxLength": 128 },
+              "packQuantity": { "title": "Pack quantity", "type": "string", "description": "Known pack count or unit quantity retained as source text.", "minLength": 1, "maxLength": 64 }
+            }
+          },
+          "authorizedRedirectOrigins": {
+            "title": "Authorized redirect origins",
+            "type": "array",
+            "description": "Optional public HTTPS origins that are separately authorized as cross-origin redirect destinations. Every origin is independently safety-checked.",
+            "editor": "stringList",
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 9,
+              "maxLength": 512,
+              "pattern": "^https:\\/\\/[^\\s/]+(?::[0-9]+)?$"
+            }
+          }
+        },
+        "required": ["name", "url", "changeTypes"]
+      }
+    },
+    "confirmAuthorizedUse": {
+      "title": "Confirm authorized use",
+      "type": "boolean",
+      "description": "Required for every non-demo target. Set true only when the public target belongs to you, intentionally exposes content for this use, or you have explicit permission to monitor it. This confirmation records existing authorization; it does not create permission.",
+      "default": false,
+      "prefill": false
+    },
+    "baselineAction": {
+      "title": "Baseline action",
+      "type": "string",
+      "description": "The safe default compare_only never creates or changes a trusted baseline. Mutating actions require explicit selection and runtime lineage checks.",
+      "editor": "select",
+      "default": "compare_only",
+      "prefill": "compare_only",
+      "enum": ["compare_only", "initialize_trusted", "store_candidate", "promote_candidate"],
+      "enumTitles": ["Compare only (safe default)", "Initialize trusted baseline", "Store candidate for review", "Promote exact candidate"]
+    },
+    "candidateId": {
+      "title": "Candidate ID",
+      "type": "string",
+      "description": "Required only for exact candidate promotion. Obtain this value from a prior candidate report.",
+      "editor": "textfield",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "expectedCandidateHash": {
+      "title": "Expected candidate hash",
+      "type": "string",
+      "description": "Required only for promotion. Exact lowercase SHA-256 hash of the reviewed candidate snapshot.",
+      "editor": "textfield",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "expectedTrustedParentHash": {
+      "title": "Expected trusted parent hash",
+      "type": "string",
+      "description": "Required only for promotion. Exact lowercase SHA-256 trusted-parent hash, or NO_PARENT when the candidate was created without a trusted baseline.",
+      "editor": "textfield",
+      "pattern": "^(?:[a-f0-9]{64}|NO_PARENT)$"
+    },
+    "includeUnchanged": {
+      "title": "Include full unchanged reports",
+      "type": "boolean",
+      "description": "When false, unchanged successful checks produce only the minimal auditable Dataset record needed for atomic pay-per-event charging.",
+      "default": false,
+      "prefill": false
+    },
+    "minimumMateriality": {
+      "title": "Minimum materiality",
+      "type": "string",
+      "description": "Lowest deterministic severity retained as a material change in the concise report.",
+      "editor": "select",
+      "default": "low",
+      "prefill": "low",
+      "enum": ["informational", "low", "medium", "high", "critical"],
+      "enumTitles": ["Informational", "Low", "Medium", "High", "Critical"]
+    },
+    "notificationMode": {
+      "title": "Notification mode",
+      "type": "string",
+      "description": "Optional post-persistence delivery. Weekly mode accumulates deduplicated redacted changes for the selected weekly window.",
+      "editor": "select",
+      "default": "none",
+      "prefill": "none",
+      "enum": ["none", "immediate", "weekly_digest"],
+      "enumTitles": ["No webhook", "Immediate material-change webhook", "Weekly digest webhook"]
+    },
+    "minimumAlertSeverity": {
+      "title": "Minimum alert severity",
+      "type": "string",
+      "description": "Lowest change severity eligible for optional webhook delivery.",
+      "editor": "select",
+      "default": "medium",
+      "prefill": "medium",
+      "enum": ["low", "medium", "high", "critical"],
+      "enumTitles": ["Low", "Medium", "High", "Critical"]
+    },
+    "alertWebhookUrl": {
+      "title": "Secret alert webhook URL",
+      "type": "string",
+      "description": "Optional authorized public HTTPS webhook. Stored as secret input and never logged, persisted, or returned.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "weeklyDigestDay": {
+      "title": "Weekly digest day",
+      "type": "integer",
+      "description": "Delivery day from one (Monday) through seven (Sunday). Used only in weekly digest mode.",
+      "editor": "number",
+      "default": 1,
+      "prefill": 1,
+      "minimum": 1,
+      "maximum": 7
+    },
+    "timezone": {
+      "title": "Digest timezone",
+      "type": "string",
+      "description": "IANA timezone used only to determine the weekly delivery window.",
+      "editor": "textfield",
+      "default": "UTC",
+      "prefill": "UTC",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9_+\\-/]+$"
+    },
+    "requestTimeoutSeconds": {
+      "title": "Request timeout",
+      "type": "integer",
+      "description": "Per-request timeout from 3 to 30 seconds.",
+      "editor": "number",
+      "unit": "seconds",
+      "default": 15,
+      "prefill": 10,
+      "minimum": 3,
+      "maximum": 30
+    },
+    "maxResponseBytes": {
+      "title": "Maximum response size",
+      "type": "integer",
+      "description": "Maximum accepted response body from 64 KiB to 5 MiB.",
+      "editor": "number",
+      "unit": "bytes",
+      "default": 2097152,
+      "prefill": 262144,
+      "minimum": 65536,
+      "maximum": 5242880
+    },
+    "maxRetries": {
+      "title": "Maximum retries",
+      "type": "integer",
+      "description": "Bounded retry count for transient network, 408, 429, and 5xx failures only.",
+      "editor": "number",
+      "default": 1,
+      "prefill": 0,
+      "minimum": 0,
+      "maximum": 2
+    },
+    "dryRun": {
+      "title": "Dry run",
+      "type": "boolean",
+      "description": "Fetch and classify without baseline mutation, webhook delivery, or pay-per-event charging.",
+      "default": false,
+      "prefill": true
+    }
+  },
+  "required": ["targets", "confirmAuthorizedUse"]
+}
