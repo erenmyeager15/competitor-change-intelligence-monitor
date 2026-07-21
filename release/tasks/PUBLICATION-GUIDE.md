@@ -2,6 +2,8 @@
 
 The saved tasks use an owner-controlled GitHub Pages fixture and run in `dryRun` + `compare_only` mode. They do not mutate trusted baselines, deliver webhooks, or charge the per-page event.
 
+All three public task pages were published on 2026-07-21 and independently verified to return HTTP 200. Their saved `publicConfig` values match the metadata, five visible input fields, and `changes` dataset view documented below.
+
 ## 1. SaaS Competitor Pricing Change Monitor
 
 - Task ID: `OTRnbHIDGXM0PWqxW`
@@ -38,9 +40,9 @@ The saved tasks use an owner-controlled GitHub Pages fixture and run in `dryRun`
 - Dataset view: `changes`
 - Landing page: `https://apify.com/fascinating_lentil/competitor-change-intelligence-monitor/examples/product-feature-changelog-monitor`
 
-## Console-only publication
+## Console-only publication procedure
 
-Apify currently requires public task landing pages to be published from each saved task's **Publication** tab. For every task:
+Apify currently requires public task landing pages to be published from each saved task's **Publication** tab. This procedure is complete; retain it for future edits:
 
 1. Open the task in Apify Console.
 2. Open **Publication**.
