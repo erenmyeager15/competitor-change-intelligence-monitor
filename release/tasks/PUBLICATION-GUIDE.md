@@ -4,6 +4,9 @@ The saved tasks use an owner-controlled GitHub Pages fixture and run in `dryRun`
 
 ## 1. SaaS Competitor Pricing Change Monitor
 
+- Task ID: `OTRnbHIDGXM0PWqxW`
+- Verified proof run: `S7KWhlUzK8ToENQT6`
+- Proof dataset: `kFuDbSaeXKETgzUEt`
 - Task slug: `saas-competitor-pricing-change-monitor`
 - SEO title: `Monitor SaaS Competitor Pricing and Plan Changes`
 - SEO description: `Track authorized SaaS pricing pages for price, plan, feature, and terms changes with before-and-after evidence and severity alerts.`
@@ -13,6 +16,9 @@ The saved tasks use an owner-controlled GitHub Pages fixture and run in `dryRun`
 
 ## 2. Terms & Policy Change Monitor
 
+- Task ID: `yceueTLLzZgCQgc3O`
+- Verified proof run: `THExn0vu1yccjXbaV`
+- Proof dataset: `fnaifVakgEIy06BOR`
 - Task slug: `terms-policy-change-monitor`
 - SEO title: `Monitor Competitor Terms and Policy Changes`
 - SEO description: `Track authorized public terms and policy pages for material updates with structured evidence, confidence, severity, and webhook-ready output.`
@@ -22,6 +28,9 @@ The saved tasks use an owner-controlled GitHub Pages fixture and run in `dryRun`
 
 ## 3. Product Feature & Changelog Monitor
 
+- Task ID: `tWdXB7uRtlfgcxqKd`
+- Verified proof run: `7QHDmYoVW6mFqBVC4`
+- Proof dataset: `I4cDkgblAR3ff2yCH`
 - Task slug: `product-feature-changelog-monitor`
 - SEO title: `Track Product Feature and Changelog Updates`
 - SEO description: `Monitor authorized product and changelog pages for new features, plan changes, launches, and structured before-and-after evidence.`

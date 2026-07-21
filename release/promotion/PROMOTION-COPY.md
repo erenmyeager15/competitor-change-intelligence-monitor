@@ -25,7 +25,7 @@ https://apify.com/fascinating_lentil/competitor-change-intelligence-monitor
 
 ## Proof references
 
-- Verified cloud run: `terQBYfh6smomsfPL`
-- Dataset: `qke22zy74SZoDmUNW`
+- Verified saved-task run: `S7KWhlUzK8ToENQT6`
+- Dataset: `kFuDbSaeXKETgzUEt`
 - Actor build: `0.1.4`
 - Proof screenshot: `competitor-change-proof.png`
