@@ -14,19 +14,19 @@
       "type": "string",
       "title": "Run summary",
       "description": "Machine-readable run counts, severity totals, baseline outcomes, and delivery status.",
-      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/RUN_SUMMARY.json"
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/RUN_SUMMARY"
     },
     "digestMarkdown": {
       "type": "string",
       "title": "Human-readable digest",
       "description": "Concise Markdown digest of material changes and recommended review actions.",
-      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIGEST.md"
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIGEST_MARKDOWN"
     },
     "digestJson": {
       "type": "string",
       "title": "Machine-readable digest",
       "description": "Structured digest for downstream automation and AI-agent workflows.",
-      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIGEST.json"
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIGEST_JSON"
     }
   }
 }

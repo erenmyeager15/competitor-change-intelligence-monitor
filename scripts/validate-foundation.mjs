@@ -101,5 +101,8 @@ assert.doesNotMatch(main, /FOUNDATION_ONLY/);
 assert.match(main, /Actor\.pushData\(\{ \.\.\.report \}, eventName\)/);
 assert.doesNotMatch(`${main}\n${runtime}`, /Actor\.charge\s*\(/);
 assert.match(runtime, /PAGE_CHECKED_EVENT/);
+assert.match(main, /Actor\.fail\(message\)/);
+assert.match(main, /contentType === 'application\/json'/);
+assert.doesNotMatch(main, /finally\s*\{\s*await Actor\.exit/);
 
 console.log(`Phase 5 repository validation passed for ${requiredFiles.length} required files.`);

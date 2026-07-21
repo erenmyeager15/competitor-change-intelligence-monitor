@@ -69,6 +69,9 @@ test('runtime uses the integrated bounded monitor and atomic event persistence',
   assert.match(main, /runMonitor/);
   assert.match(main, /Actor\.pushData\(\{ \.\.\.report \}, eventName\)/);
   assert.doesNotMatch(main, /Actor\.charge/);
+  assert.match(main, /Actor\.fail\(message\)/);
+  assert.match(main, /contentType === 'application\/json'/);
+  assert.doesNotMatch(main, /finally\s*\{\s*await Actor\.exit/);
   assert.doesNotMatch(runtime, /Actor\.charge/);
   assert.match(runtime, /PAGE_CHECKED_EVENT/);
 });

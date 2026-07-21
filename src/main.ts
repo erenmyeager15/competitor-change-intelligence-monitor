@@ -1,6 +1,7 @@
 import { Actor, log } from 'apify';
 import { parseActorInput } from './input.js';
 import { runMonitor, type PushResult } from './runtime.js';
+import { redactText } from './security/redaction.js';
 
 const STATE_STORE_NAME = 'competitor-change-intelligence-state';
 
@@ -32,7 +33,11 @@ try {
       return { chargedCount: 0, eventChargeLimitReached: false, chargeableWithinLimit: {} };
     },
     setOutputValue: async (key, value, contentType) => {
-      await outputStore.setValue(key, value, { contentType });
+      if (contentType === 'application/json') {
+        await outputStore.setValue(key, value);
+      } else {
+        await outputStore.setValue(key, String(value), { contentType });
+      }
     },
     runUrl,
   });
@@ -48,6 +53,10 @@ try {
     skippedForChargeLimit: result.summary.skippedForChargeLimit,
     deliveryStatus: result.summary.delivery.status,
   });
-} finally {
-  await Actor.exit();
+} catch (error) {
+  const message = redactText((error as Error)?.message ?? 'Actor run failed.', 500);
+  log.error('Competitor change intelligence run failed.', { error: message });
+  await Actor.fail(message);
 }
+
+await Actor.exit();

@@ -99,7 +99,7 @@ test('dry run does not mutate, charge, or deliver', async () => {
   assert.equal(sends, 0);
   assert.equal(result.summary.chargedEventCount, 0);
   assert.equal(result.summary.delivery.status, 'disabled');
-  assert.deepEqual([...deps.outputs.keys()].sort(), ['DIGEST.json', 'DIGEST.md', 'RUN_SUMMARY.json']);
+  assert.deepEqual([...deps.outputs.keys()].sort(), ['DIGEST_JSON', 'DIGEST_MARKDOWN', 'RUN_SUMMARY']);
 });
 
 test('successful report persistence and PPE charging are one atomic operation', async () => {

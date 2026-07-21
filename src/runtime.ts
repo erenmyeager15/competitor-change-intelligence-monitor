@@ -154,9 +154,9 @@ export async function runMonitor(input: ActorInput, dependencies: RuntimeDepende
     delivery,
     costAssessment: assessCost(chargedEventCount),
   };
-  await dependencies.setOutputValue('DIGEST.json', digest, 'application/json');
-  await dependencies.setOutputValue('DIGEST.md', digestMarkdown(digest), 'text/markdown');
-  await dependencies.setOutputValue('RUN_SUMMARY.json', summary, 'application/json');
+  await dependencies.setOutputValue('DIGEST_JSON', digest, 'application/json');
+  await dependencies.setOutputValue('DIGEST_MARKDOWN', digestMarkdown(digest), 'text/markdown');
+  await dependencies.setOutputValue('RUN_SUMMARY', summary, 'application/json');
   return { reports, digest, summary };
 }
 

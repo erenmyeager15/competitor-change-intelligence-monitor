@@ -6,19 +6,19 @@
     "runSummary": {
       "title": "Run summary",
       "description": "Machine-readable totals and delivery outcome for the current run.",
-      "key": "RUN_SUMMARY.json",
+      "key": "RUN_SUMMARY",
       "contentTypes": ["application/json"]
     },
     "digestMarkdown": {
       "title": "Markdown digest",
       "description": "Bounded action-focused human-readable digest.",
-      "key": "DIGEST.md",
+      "key": "DIGEST_MARKDOWN",
       "contentTypes": ["text/markdown"]
     },
     "digestJson": {
       "title": "JSON digest",
       "description": "Bounded machine-readable material-change digest.",
-      "key": "DIGEST.json",
+      "key": "DIGEST_JSON",
       "contentTypes": ["application/json"]
     },
     "trustedBaselineManifests": {
