@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "competitor-change-intelligence-monitor",
   "title": "Competitor Change Intelligence Monitor",
-  "description": "Monitor authorized public competitor, pricing, product, terms, and changelog pages for material changes with bounded evidence, confidence, severity, and action-focused reports.",
+  "description": "Track competitor pricing, plans, features, terms, and changelogs on authorized public pages. Get structured before-and-after evidence, severity, confidence, webhook alerts, and review-safe baselines.",
   "version": "0.1",
   "dockerfile": "../Dockerfile",
   "input": "./INPUT_SCHEMA.json",
@@ -15,10 +15,10 @@
   },
   "defaultRunOptions": {
     "build": "latest",
-    "memoryMbytes": 512,
+    "memoryMbytes": 256,
     "timeoutSecs": 300,
     "maxItems": 25
   },
   "minMemoryMbytes": 256,
-  "maxMemoryMbytes": 2048
+  "maxMemoryMbytes": 512
 }

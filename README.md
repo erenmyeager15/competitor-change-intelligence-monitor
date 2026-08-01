@@ -9,6 +9,28 @@ Use it for competitor pricing intelligence, product launch monitoring, SaaS plan
 tracking, public terms updates, and release-note alerts without building a custom
 monitoring pipeline.
 
+## Try A Safe Example
+
+These public examples use an owner-controlled fictional SaaS page. They run in
+dry-run comparison mode, do not update a baseline, send alerts, or charge the
+per-page event.
+
+- [SaaS Competitor Pricing Change Monitor](https://apify.com/fascinating_lentil/competitor-change-intelligence-monitor/examples/saas-competitor-pricing-change-monitor)
+- [Terms & Policy Change Monitor](https://apify.com/fascinating_lentil/competitor-change-intelligence-monitor/examples/terms-policy-change-monitor)
+- [Product Feature & Changelog Monitor](https://apify.com/fascinating_lentil/competitor-change-intelligence-monitor/examples/product-feature-changelog-monitor)
+
+Verified proof runs detected pricing, plan, feature, terms, and changelog changes
+with structured evidence and confidence scores. A recent one-page cloud proof
+completed in about 4 seconds, peaked near 55 MB of memory, and used about
+**$0.00032** in platform resources.
+
+## Why It Is Different
+
+This is not only a raw text-diff tool. It classifies material business changes,
+normalizes prices and product identifiers conservatively, preserves an explicit
+trusted baseline, and keeps unexpected revisions in reviewable candidate state
+instead of silently trusting them.
+
 ## What You Get
 
 - Structured before-and-after changes instead of raw page diffs
@@ -141,7 +163,11 @@ This Actor uses pay per event:
 
 - `page-checked`: **$0.003** for each successfully inspected page report persisted
   to the Dataset
-- Actor start: Apify's small synthetic start event
+- Actor start: **$0.00005** per run
+
+Platform usage is billed separately by Apify. The observed July average was about
+**$0.31 per 1,000 Dataset results**, although real cost varies with page size,
+response time, storage operations, and retries.
 
 Dry runs, invalid input, unauthorized targets, blocked or robots-disallowed pages,
 failed inspections, and failed Dataset persistence do not charge `page-checked`.
@@ -150,6 +176,7 @@ failed inspections, and failed Dataset persistence do not charge `page-checked`.
 
 - One to 25 explicitly configured public HTTPS pages per run
 - One document per target; no recursive crawling
+- Public HTML, JSON, XML, and text responses only; no browser rendering
 - Public-IP DNS validation and rebinding protection
 - Same-origin redirects unless another public HTTPS origin is explicitly authorized
 - Robots.txt enforcement, bounded responses, timeouts, and retries
