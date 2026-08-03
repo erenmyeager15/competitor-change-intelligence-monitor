@@ -203,5 +203,9 @@ When reporting an issue, include the public target type, selected change types, 
 ID, and redacted log excerpt. Never share credentials, private URLs, or webhook
 secrets.
 
+Need another change type, output field, or authorized public-page workflow? Open an
+Issue with the use case, desired output, and monitoring frequency. Do not include
+private or gated URLs, credentials, personal data, or webhook secrets.
+
 Source and issue tracker:
 [GitHub repository](https://github.com/erenmyeager15/competitor-change-intelligence-monitor)
