@@ -4,7 +4,7 @@ import test from 'node:test';
 import type { BaselineStore } from '../src/baseline/types.js';
 import { extractDocument } from '../src/extraction/extract.js';
 import type { PageInspection } from '../src/inspection.js';
-import { runMonitor, type PushResult, type RuntimeDependencies } from '../src/runtime.js';
+import { runMonitor, monitorOutcome, type PushResult, type RuntimeDependencies } from '../src/runtime.js';
 import type { ActorInput, TargetInput, TargetReport } from '../src/types.js';
 
 class MemoryStore implements BaselineStore {
@@ -22,6 +22,17 @@ const target: TargetInput = {
   changeTypes: ['price', 'product_feature', 'pricing_plan', 'terms_policy'],
   currency: 'USD',
 };
+
+test('all failures cannot masquerade as successful monitoring, while budget stops are explicit', () => {
+  const report = { status: 'success_no_change', persistence: { succeeded: true } } as TargetReport;
+  const blocked = { status: 'blocked_target', persistence: { succeeded: true } } as TargetReport;
+  assert.equal(monitorOutcome([report], 0, 0), 'complete');
+  assert.equal(monitorOutcome([report, blocked], 0, 0), 'partial');
+  assert.equal(monitorOutcome([blocked], 0, 0), 'failed');
+  assert.equal(monitorOutcome([], 1, 0), 'failed');
+  assert.equal(monitorOutcome([], 0, 2), 'budget_limited');
+  assert.equal(monitorOutcome([{ ...blocked, error: { code: 'CHARGE_ALLOWANCE_EXHAUSTED', message: 'Budget' } }], 0, 0), 'budget_limited');
+});
 
 function actorInput(overrides: Partial<ActorInput> = {}): ActorInput {
   return {
@@ -81,6 +92,22 @@ function dependencies(overrides: Partial<RuntimeDependencies> = {}): RuntimeDepe
   };
 }
 
+test('every exported content type matches the deployed storage schema exactly', async () => {
+  const schema = JSON.parse(await readFile(new URL('../../.actor/key_value_store_schema.json', import.meta.url), 'utf8'));
+  const written: string[] = [];
+  const deps = dependencies({
+    inspect: async () => pageInspection(1),
+    setOutputValue: async (key, _value, contentType) => {
+      const collection = Object.values(schema.collections).find((entry: any) => entry.key === key) as { contentTypes: string[] } | undefined;
+      assert.ok(collection, `Missing schema for ${key}`);
+      assert.ok(collection.contentTypes.includes(contentType), `${key}: ${contentType} does not match deployed schema`);
+      written.push(key);
+    },
+  });
+  await runMonitor(actorInput({ baselineAction: 'initialize_trusted' }), deps);
+  assert.ok(written.includes('REVIEW_CSV'));
+});
+
 test('dry run does not mutate, charge, or deliver', async () => {
   const stateStore = new MemoryStore();
   const events: Array<string | undefined> = [];
@@ -99,7 +126,7 @@ test('dry run does not mutate, charge, or deliver', async () => {
   assert.equal(sends, 0);
   assert.equal(result.summary.chargedEventCount, 0);
   assert.equal(result.summary.delivery.status, 'disabled');
-  assert.deepEqual([...deps.outputs.keys()].sort(), ['DIGEST_JSON', 'DIGEST_MARKDOWN', 'RUN_SUMMARY']);
+  assert.deepEqual([...deps.outputs.keys()].sort(), ['DIGEST_JSON', 'DIGEST_MARKDOWN', 'REVIEW_CSV', 'RUN_SUMMARY']);
 });
 
 test('successful report persistence and PPE charging are one atomic operation', async () => {

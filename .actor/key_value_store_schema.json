@@ -3,6 +3,12 @@
   "title": "Change intelligence reports and baseline state",
   "description": "Run summaries, concise digests, and versioned trusted/candidate baseline records. Raw HTML, webhook URLs, credentials, and personal contact data are not stored.",
   "collections": {
+    "reviewCsv": {
+      "title": "Change review CSV",
+      "description": "Flattened change review and diagnostic rows, with spreadsheet-formula protection.",
+      "key": "REVIEW_CSV",
+      "contentTypes": ["text/csv"]
+    },
     "runSummary": {
       "title": "Run summary",
       "description": "Machine-readable totals and delivery outcome for the current run.",

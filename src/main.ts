@@ -1,5 +1,5 @@
 import { Actor, log } from 'apify';
-import { PAGE_CHECKED_EVENT, RECOMMENDED_PAGE_CHECKED_PRICE_USD, normalizeSingleReportCharge } from './billing.js';
+import { PAGE_CHECKED_EVENT, validateEventPrice, normalizeSingleReportCharge } from './billing.js';
 import { parseActorInput } from './input.js';
 import { runMonitor, type PushResult } from './runtime.js';
 import { redactText } from './security/redaction.js';
@@ -14,9 +14,7 @@ try {
   const stateStore = await Actor.openKeyValueStore(STATE_STORE_NAME);
   const chargingManager = Actor.getChargingManager();
   const pricing = chargingManager.getPricingInfo();
-  if (pricing.isPayPerEvent && pricing.perEventPrices[PAGE_CHECKED_EVENT] !== RECOMMENDED_PAGE_CHECKED_PRICE_USD) {
-    throw new Error(`PPE pricing must configure '${PAGE_CHECKED_EVENT}' at $${RECOMMENDED_PAGE_CHECKED_PRICE_USD}.`);
-  }
+  validateEventPrice(pricing.isPayPerEvent, pricing.perEventPrices[PAGE_CHECKED_EVENT]);
   const environment = Actor.getEnv();
   const runUrl = environment.actorRunId ? `https://console.apify.com/view/runs/${environment.actorRunId}` : null;
 
@@ -30,6 +28,7 @@ try {
   const result = await runMonitor(input, {
     stateStore,
     billingEnabled: pricing.isPayPerEvent,
+    eventPriceUsd: pricing.isPayPerEvent ? pricing.perEventPrices[PAGE_CHECKED_EVENT] : 0,
     getChargeableCount: (eventName) => chargingManager.calculateMaxEventChargeCountWithinLimit(eventName),
     pushData: async (report, eventName): Promise<PushResult> => {
       if (eventName) {
@@ -51,6 +50,9 @@ try {
     runUrl,
   });
 
+  if (result.summary.outcome === 'failed') {
+    throw new Error('No target produced a usable monitoring report. See RUN_SUMMARY and target reports for the specific failure; failed checks are not billed.');
+  }
   await Actor.setStatusMessage(
     `Processed ${result.summary.processedTargetCount}/${result.summary.targetCount} targets; `
     + `${result.summary.chargedEventCount} billable page report(s); delivery ${result.summary.delivery.status}.`,

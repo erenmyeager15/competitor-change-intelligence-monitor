@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { PAGE_CHECKED_EVENT, assessCost, isBillableReport, normalizeSingleReportCharge } from '../src/billing.js';
+import { PAGE_CHECKED_EVENT, assessCost, isBillableReport, normalizeSingleReportCharge, validateEventPrice } from '../src/billing.js';
 import type { TargetReport } from '../src/types.js';
 
 function report(status: TargetReport['status'], persisted = true): TargetReport {
@@ -27,10 +27,10 @@ test('only successful persisted non-dry reports are billable', () => {
 
 test('cost assessment never invents measured cloud cost or margin', () => {
   assert.deepEqual(assessCost(10), {
-    chargedPages: 10, revenueUsd: 0.03, platformCostUsd: null, profitUsd: null, marginPercent: null, measured: false,
+    chargedPages: 10, revenueUsd: 0.024, grossRevenueUsd: 0.03, estimatedPlatformShare: 0.2, platformCostUsd: null, profitUsd: null, marginPercent: null, measured: false,
   });
   assert.deepEqual(assessCost(10, 0.006), {
-    chargedPages: 10, revenueUsd: 0.03, platformCostUsd: 0.006, profitUsd: 0.024, marginPercent: 80, measured: true,
+    chargedPages: 10, revenueUsd: 0.024, grossRevenueUsd: 0.03, estimatedPlatformShare: 0.2, platformCostUsd: 0.006, profitUsd: 0.018, marginPercent: 75, measured: true,
   });
 });
 
@@ -46,7 +46,15 @@ test('entrypoint uses atomic pushData event billing and never separate Actor.cha
   const main = await readFile('src/main.ts', 'utf8');
   assert.equal(PAGE_CHECKED_EVENT, 'page-checked');
   assert.match(main, /Actor\.pushData\(\{ \.\.\.report \}, eventName\)/);
-  assert.match(main, /pricing\.perEventPrices\[PAGE_CHECKED_EVENT\] !== RECOMMENDED_PAGE_CHECKED_PRICE_USD/);
+  assert.match(main, /validateEventPrice\(pricing.isPayPerEvent, pricing.perEventPrices\[PAGE_CHECKED_EVENT\]\)/);
   assert.match(main, /normalizeSingleReportCharge\(charge\)/);
   assert.doesNotMatch(main, /Actor\.charge\s*\(/);
+});
+
+test('discounted and zero event prices remain valid; absent or corrupt pricing fails clearly', () => {
+  for (const price of [0, 0.0015, 0.003, 0.005]) assert.doesNotThrow(() => validateEventPrice(true, price));
+  for (const price of [undefined, NaN, Infinity, -1, '0.003']) assert.throws(() => validateEventPrice(true, price));
+  assert.doesNotThrow(() => validateEventPrice(false, undefined));
+  assert.equal(assessCost(10, 0.006, 0.0015).marginPercent, 50);
+  assert.equal(assessCost(10, 0, 0).marginPercent, null);
 });

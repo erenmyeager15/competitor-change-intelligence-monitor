@@ -6,6 +6,7 @@ import type { DeliveryOutcome, DigestDocument } from './delivery/types.js';
 import { inspectTarget } from './inspection.js';
 import { composeTargetReport } from './intelligence/report.js';
 import { redactText, redactUrl } from './security/redaction.js';
+import { reviewCsv } from './review-export.js';
 import type { ActorInput, ReportStatus, Severity, TargetInput, TargetReport } from './types.js';
 
 export const RUNTIME_SCHEMA_VERSION = 1 as const;
@@ -32,6 +33,7 @@ export interface RunSummary {
   severityCounts: Record<Severity, number>;
   delivery: DeliveryOutcome;
   costAssessment: CostAssessment;
+  outcome: 'complete' | 'partial' | 'failed' | 'budget_limited';
 }
 
 export interface MonitorRunResult {
@@ -43,6 +45,7 @@ export interface MonitorRunResult {
 export interface RuntimeDependencies {
   stateStore: BaselineStore;
   billingEnabled: boolean;
+  eventPriceUsd?: number;
   getChargeableCount: (eventName: string) => number;
   pushData: (report: TargetReport, eventName?: string) => Promise<PushResult>;
   setOutputValue: (key: string, value: unknown, contentType: string) => Promise<void>;
@@ -152,12 +155,21 @@ export async function runMonitor(input: ActorInput, dependencies: RuntimeDepende
     statusCounts: countValues(reports.map((report) => report.status)),
     severityCounts: countSeverities(reports),
     delivery,
-    costAssessment: assessCost(chargedEventCount),
+    costAssessment: assessCost(chargedEventCount, undefined, dependencies.eventPriceUsd),
+    outcome: monitorOutcome(reports, persistenceFailureCount, skippedForChargeLimit),
   };
   await dependencies.setOutputValue('DIGEST_JSON', digest, 'application/json');
   await dependencies.setOutputValue('DIGEST_MARKDOWN', digestMarkdown(digest), 'text/markdown');
   await dependencies.setOutputValue('RUN_SUMMARY', summary, 'application/json');
+  await dependencies.setOutputValue('REVIEW_CSV', reviewCsv(reports), 'text/csv');
   return { reports, digest, summary };
+}
+
+export function monitorOutcome(reports: TargetReport[], persistenceFailures: number, skippedForBudget: number): RunSummary['outcome'] {
+  const usable = reports.filter((report) => isBillableReport(report, false)).length;
+  if (skippedForBudget > 0 || reports.some((report) => report.error?.code === 'CHARGE_ALLOWANCE_EXHAUSTED')) return 'budget_limited';
+  if (usable === 0) return 'failed';
+  return usable < reports.length || persistenceFailures > 0 ? 'partial' : 'complete';
 }
 
 function datasetReport(report: TargetReport, includeUnchanged: boolean): TargetReport {

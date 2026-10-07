@@ -4,6 +4,12 @@
   "title": "Competitor change intelligence output",
   "description": "Per-target monitoring reports, concise run summaries, and human-readable or machine-readable digests. Persistent baseline state is intentionally not exposed as a run-output link.",
   "properties": {
+    "reviewCsv": {
+      "type": "string",
+      "title": "Change review CSV",
+      "description": "Flattened before/after changes with percentage deltas, confidence and recommended actions. Includes diagnostic rows for targets without changes.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/REVIEW_CSV"
+    },
     "reports": {
       "type": "string",
       "title": "Target reports",

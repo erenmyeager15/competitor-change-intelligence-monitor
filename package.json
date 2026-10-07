@@ -30,6 +30,9 @@
     "typescript": "5.9.2"
   },
   "overrides": {
-    "adm-zip": "0.6.0"
+    "adm-zip": "0.6.1",
+    "get-uri": {
+      "basic-ftp": "6.2.2"
+    }
   }
 }

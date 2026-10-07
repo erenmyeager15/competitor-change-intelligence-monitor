@@ -11,6 +11,12 @@ monitoring pipeline.
 
 ## Try A Safe Example
 
+### Review and reliability upgrade
+
+`REVIEW_CSV` provides one row per material change with before/after values, percentage delta, severity, confidence and recommended action. Targets without changes still receive a diagnostic row, so blocked pages cannot disappear from the review. Spreadsheet formula-like source values are escaped. This export needs no additional page requests or extra charge event.
+
+`RUN_SUMMARY.outcome` distinguishes complete, partial, failed and budget-limited checks. Runs with no usable target report fail after saving diagnostics. Discounted and zero-price events are accepted; an exact fixed-price check no longer rejects them. Cost estimates use the configured event price and an explicitly estimated 20% platform share; they exclude start-event revenue and cannot establish a measured margin until platform costs are available. Demo/dry runs remain nonbillable and are not a profitability benchmark.
+
 These public examples use an owner-controlled fictional SaaS page. They run in
 dry-run comparison mode, do not update a baseline, send alerts, or charge the
 per-page event.
